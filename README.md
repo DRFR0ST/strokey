@@ -1,8 +1,10 @@
-# stroke-log README
+# stroke-log
 
 This extension will count all keystrokes for you!
 
 Useless, right? :D
+
+[example]: https://imgur.com/zm87pD2.png "Example"
 
 ## Download
 

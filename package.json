@@ -4,7 +4,8 @@
 	"description": "Counts all keystrokes.",
 	"author": "Mike Eling <mike.eling97@gmail.com>",
 	"publisher": "drfrost",
-	"version": "0.0.1",
+	"repository": "https://github.com/DRFR0ST/stroke-log",
+	"version": "1.0.1",
 	"engines": {
 		"vscode": "^1.33.0"
 	},

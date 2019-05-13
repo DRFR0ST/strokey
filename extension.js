@@ -11,7 +11,10 @@ let barItem;
  * @param {vscode.ExtensionContext} context
  */
 function activate({ subscriptions, globalState }) {
-  keyStrokes = globalState.get("key-strokes") || -1;
+  const state = globalState.get("key-strokes");
+  if (!state) globalState.update("key-strokes", 0);
+
+  keyStrokes = globalState.get("key-strokes");
 
   const countCMDId = "extension.count";
 
@@ -32,18 +35,23 @@ function activate({ subscriptions, globalState }) {
   subscriptions.push(barItem);
 
   subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument(updateKeyStrokes)
+    vscode.workspace.onDidChangeTextDocument(e =>
+      updateKeyStrokes(e, globalState)
+    )
   );
 
+  console.log("[stroke-log] v1.0.0 activated!");
   updateKeyStrokes();
 }
 
-function updateKeyStrokes(e) {
-  if (e && e.contentChanges && e.contentChanges[0].text.length <= 1)
+function updateKeyStrokes(e, globalState) {
+  if (e && e.contentChanges && e.contentChanges[0].text.length <= 1) {
+    globalState.update("key-strokes", keyStrokes);
     keyStrokes = keyStrokes + 1;
+  }
 
   if (keyStrokes > -1) {
-    barItem.text = `Strokes: ${keyStrokes}`;
+    barItem.text = `⌨️  ${keyStrokes} strokes`;
     barItem.show();
   } else {
     barItem.hide();
@@ -54,7 +62,7 @@ exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate({ globalState }) {
-  globalState.update("key-strokes", keyStrokes);
+  console.log("[stroke-log] v1.0.0 deactivated!");
 }
 
 module.exports = {
