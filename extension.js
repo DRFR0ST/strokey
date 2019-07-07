@@ -30,9 +30,6 @@ function activate({ subscriptions, globalState, workspaceState }) {
   if (!globalState.get("daily-strokes-day"))
     globalState.update("daily-strokes-day", getDayOfYear());
 
-  globalKeyStrokes = globalState.get("key-strokes");
-  weeklyKeyStrokes = globalState.get("weekly-strokes");
-  dailyKeyStrokes = globalState.get("daily-strokes");
   if (globalState.get("weekly-strokes-week") !== getWeekNumber(new Date())) {
     globalState.update("weekly-strokes", 0);
     globalState.update("weekly-strokes-week", getWeekNumber(new Date()));
@@ -47,6 +44,10 @@ function activate({ subscriptions, globalState, workspaceState }) {
     workspaceState.update("daily-strokes", 0);
     workspaceState.update("daily-strokes-day", getDayOfYear());
   }
+
+  globalKeyStrokes = globalState.get("key-strokes") || 0;
+  weeklyKeyStrokes = globalState.get("weekly-strokes") || 0;
+  dailyKeyStrokes = globalState.get("daily-strokes") || 0;
 
   if (workspaceToggled) workspaceKeyStrokes = workspaceState.get("key-strokes");
   if (workspaceToggled)
@@ -123,14 +124,17 @@ function updateKeyStrokes(e, globalState, workspaceState) {
 
     if (globalState.get("weekly-strokes-week") !== getWeekNumber(new Date())) {
       globalState.update("weekly-strokes", 0);
+      weeklyKeyStrokes = 0;
       globalState.update("weekly-strokes-week", getWeekNumber(new Date()));
     }
     if (globalState.get("daily-strokes-day") !== getDayOfYear()) {
       globalState.update("daily-strokes", 0);
+      dailyKeyStrokes = 0;
       globalState.update("daily-strokes-day", getDayOfYear());
     }
     if (workspaceState.get("daily-strokes-day") !== getDayOfYear()) {
       workspaceState.update("daily-strokes", 0);
+      dailyWorkspaceKeyStrokes = 0;
       workspaceState.update("daily-strokes-day", getDayOfYear());
     }
   }
@@ -143,7 +147,7 @@ function updateKeyStrokes(e, globalState, workspaceState) {
   }
 
   if (globalKeyStrokes > -1) {
-    barItem.text = `⌨️  ${dailyKeyStrokes} strokes today`;
+    barItem.text = `⌨️  ${dailyKeyStrokes} strokes today ${getDayOfYear()}`;
     barItem.show();
   } else {
     barItem.hide();
