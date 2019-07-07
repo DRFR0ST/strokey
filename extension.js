@@ -147,7 +147,7 @@ function updateKeyStrokes(e, globalState, workspaceState) {
   }
 
   if (globalKeyStrokes > -1) {
-    barItem.text = `⌨️  ${dailyKeyStrokes} strokes today ${getDayOfYear()}`;
+    barItem.text = `⌨️  ${dailyKeyStrokes} strokes today`;
     barItem.show();
   } else {
     barItem.hide();
