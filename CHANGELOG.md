@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.1] - 2019-07-08
+#### Fixed
+- Daily strokes reset.
+
 ## [1.1.0] - 2019-07-08
 #### Added
 - Workspace statistics.
