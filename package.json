@@ -1,19 +1,16 @@
 {
 	"name": "stroke-log",
-	"displayName": "stroke-log",
+	"displayName": "Stroke Log",
 	"description": "Counts all keystrokes.",
 	"author": "Mike Eling <mike.eling97@gmail.com>",
 	"publisher": "drfrost",
 	"repository": "https://github.com/DRFR0ST/stroke-log",
-	"version": "1.0.2",
+	"version": "1.1.0",
 	"engines": {
 		"vscode": "^1.33.0"
 	},
 	"categories": [
 		"Other"
-	],
-	"activationEvents": [
-		"*"
 	],
 	"main": "./extension.js",
 	"scripts": {
@@ -31,5 +28,17 @@
   "galleryBanner": {
     "color": "#C80000",
     "theme": "dark"
-  }
+	},
+	"activationEvents": [
+		"onCommand:extension.toggleWorkspace",
+		"*"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.toggleWorkspace",
+				"title": "Stroke Log: Toggle Workspace"
+			}
+		]
+	}
 }
