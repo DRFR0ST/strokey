@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.2] - 2019-07-08
+#### Removed
+- Debug code
+
 ## [1.1.1] - 2019-07-08
 #### Fixed
 - Daily strokes reset.
