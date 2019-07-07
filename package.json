@@ -24,10 +24,10 @@
 		"@types/node": "^10.12.21",
 		"@types/mocha": "^2.2.42"
 	},
-  "icon": "images/icon.png",
-  "galleryBanner": {
-    "color": "#C80000",
-    "theme": "dark"
+	"icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#C80000",
+		"theme": "dark"
 	},
 	"activationEvents": [
 		"onCommand:extension.toggleWorkspace",
