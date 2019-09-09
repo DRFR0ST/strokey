@@ -1,7 +1,7 @@
 {
 	"name": "stroke-log",
 	"displayName": "Stroke Log",
-	"description": "Counts all keystrokes.",
+	"description": "Counts all your keystrokes.",
 	"author": "Mike Eling <mike.eling97@gmail.com>",
 	"publisher": "drfrost",
 	"repository": "https://github.com/DRFR0ST/stroke-log",
@@ -37,7 +37,7 @@
 		"commands": [
 			{
 				"command": "extension.toggleWorkspace",
-				"title": "Stroke Log: Toggle Workspace"
+				"title": "Stroke Log: Toggle workspace log"
 			}
 		]
 	}

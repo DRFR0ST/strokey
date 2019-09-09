@@ -1,10 +1,14 @@
 # stroke-log
 
-This extension will count all keystrokes for you!
+## The most powerful extension 💀
+This extension will count all keystrokes for you! Daily, Weekly and Monthly! 🔥
 
-Useless, right? :D
 
-[example]: https://imgur.com/zm87pD2.png "Example"
+> Useless, right? 
+~ the creator.
+
+
+![example](https://i.imgur.com/5CCvPTO.png "Example")
 
 ## Download
 
