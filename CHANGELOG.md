@@ -2,12 +2,18 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.1.3] - 2019-09-10
 ### Fixed
 - Weekly stats
 
 ### Added
 - Monthly stats
 - Workspace monthly and weekly stats
+
+### Changed
+- Keyboard icons
+- Bottom bar text
 
 ## [1.1.2] - 2019-07-08
 #### Removed

@@ -95,7 +95,7 @@ function activate({ subscriptions, globalState, workspaceState }) {
     )
   );
 
-  console.log("[stroke-log] v2.0.0 activated!");
+  console.log("[stroke-log] activated!");
   updateKeyStrokes();
 }
 
@@ -141,14 +141,14 @@ function updateKeyStrokes(e, globalState, workspaceState) {
   }
 
   if (workspaceToggled) {
-    barItemWorkspace.text = `$(keyboard)  ${keystrokes.workspace.daily} strokes in workspace today`;
+    barItemWorkspace.text = `$(keyboard) ${keystrokes.workspace.daily} strokes in workspace`;
     barItemWorkspace.show();
   } else {
     barItemWorkspace.hide();
   }
 
   if (keystrokes.global.all > -1) {
-    barItem.text = `$(keyboard)  ${keystrokes.global.daily} strokes today`;
+    barItem.text = `$(keyboard) ${keystrokes.global.daily} strokes`;
     barItem.show();
   } else {
     barItem.hide();
@@ -159,7 +159,7 @@ exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate({ globalState }) {
-  console.log("[stroke-log] v2.0.0 deactivated!");
+  console.log("[stroke-log] deactivated!");
 }
 
 module.exports = {
