@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Fixed
+- Weekly stats
+
+### Added
+- Monthly stats
+- Workspace monthly and weekly stats
 
 ## [1.1.2] - 2019-07-08
 #### Removed

@@ -5,53 +5,45 @@ const vscode = require("vscode");
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
-let globalKeyStrokes = 0;
-let weeklyKeyStrokes = 0;
-let dailyKeyStrokes = 0;
-let workspaceKeyStrokes = 0;
-let dailyWorkspaceKeyStrokes = 0;
+let keystrokes = {
+  workspace: {
+    daily: 0,
+    weekly: 0,
+    monthly: 0,
+    all: 0
+  },
+  global: {
+    daily: 0,
+    weekly: 0,
+    monthly: 0,
+    all: 0
+  }
+};
 let workspaceToggled = false;
+
 let barItem;
 let barItemWorkspace;
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate({ subscriptions, globalState, workspaceState }) {
-  const state = globalState.get("key-strokes");
+  // Workspace toggle
   workspaceToggled = globalState.get("workspace-toggled");
-  if (!workspaceToggled && workspaceToggled !== false)
-    globalState.update("workspace-toggled", true);
-  if (!state) globalState.update("key-strokes", 0);
-  if (!globalState.get("weekly-strokes"))
-    globalState.update("weekly-strokes", 0);
-  if (!globalState.get("weekly-strokes-week"))
-    globalState.update("weekly-strokes-week", getDayOfYear());
-  if (!globalState.get("daily-strokes")) globalState.update("daily-strokes", 0);
-  if (!globalState.get("daily-strokes-day"))
-    globalState.update("daily-strokes-day", getDayOfYear());
 
-  if (globalState.get("weekly-strokes-week") !== getWeekNumber(new Date())) {
-    globalState.update("weekly-strokes", 0);
-    globalState.update("weekly-strokes-week", getWeekNumber(new Date()));
-  }
+  // Global state
+  keystrokes.global.daily = globalState.get("global-daily-strokes") || 0;
+  keystrokes.global.weekly = globalState.get("global-weekly-strokes") || 0;
+  keystrokes.global.monthly = globalState.get("global-monthly-strokes") || 0;
+  keystrokes.global.all = globalState.get("global-all-strokes") || 0;
 
-  if (globalState.get("daily-strokes-day") !== getDayOfYear()) {
-    globalState.update("daily-strokes", 0);
-    globalState.update("daily-strokes-day", getDayOfYear());
-  }
-
-  if (workspaceState.get("daily-strokes-day") !== getDayOfYear()) {
-    workspaceState.update("daily-strokes", 0);
-    workspaceState.update("daily-strokes-day", getDayOfYear());
-  }
-
-  globalKeyStrokes = globalState.get("key-strokes") || 0;
-  weeklyKeyStrokes = globalState.get("weekly-strokes") || 0;
-  dailyKeyStrokes = globalState.get("daily-strokes") || 0;
-
-  if (workspaceToggled) workspaceKeyStrokes = workspaceState.get("key-strokes");
-  if (workspaceToggled)
-    dailyWorkspaceKeyStrokes = workspaceState.get("daily-strokes");
+  // Workspace state
+  keystrokes.workspace.daily =
+    workspaceState.get("workspace-daily-strokes") || 0;
+  keystrokes.workspace.weekly =
+    workspaceState.get("workspace-weekly-strokes") || 0;
+  keystrokes.workspace.monthly =
+    workspaceState.get("workspace-monthly-strokes") || 0;
+  keystrokes.workspace.all = workspaceState.get("workspace-all-strokes") || 0;
 
   const countCMDId = "extension.count";
   const countCMDIdWorkspace = "extension.countWorkspace";
@@ -59,7 +51,7 @@ function activate({ subscriptions, globalState, workspaceState }) {
   subscriptions.push(
     vscode.commands.registerCommand(countCMDId, () => {
       vscode.window.showInformationMessage(
-        `Stroked ${globalKeyStrokes} keys in whole, ${weeklyKeyStrokes} in this week, ${dailyKeyStrokes} today.`
+        `Stroked ${keystrokes.global.all} keys in whole, ${keystrokes.global.monthly} in this month, ${keystrokes.global.weekly} in this week, ${keystrokes.global.daily} today.`
       );
     })
   );
@@ -67,14 +59,14 @@ function activate({ subscriptions, globalState, workspaceState }) {
   subscriptions.push(
     vscode.commands.registerCommand(countCMDIdWorkspace, () => {
       vscode.window.showInformationMessage(
-        `Stroked ${workspaceKeyStrokes} keys in whole and ${dailyWorkspaceKeyStrokes} today.`
+        `Stroked ${keystrokes.workspace.all} keys in whole, ${keystrokes.workspace.monthly} in this month, ${keystrokes.workspace.weekly} in this week, ${keystrokes.workspace.daily} today.`
       );
     })
   );
 
   barItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
-    100
+    101
   );
   barItem.command = countCMDId;
 
@@ -82,6 +74,7 @@ function activate({ subscriptions, globalState, workspaceState }) {
     vscode.StatusBarAlignment.Right,
     101
   );
+
   barItemWorkspace.command = countCMDIdWorkspace;
   let toggleWorkspace = vscode.commands.registerCommand(
     "extension.toggleWorkspace",
@@ -90,64 +83,72 @@ function activate({ subscriptions, globalState, workspaceState }) {
         "workspace-toggled",
         !globalState.get("workspace-toggled")
       );
-      workspaceKeyStrokes = workspaceState.get("key-strokes");
-      dailyWorkspaceKeyStrokes = workspaceState.get("daily-strokes");
       workspaceToggled = globalState.get("workspace-toggled");
     }
   );
 
   subscriptions.push(toggleWorkspace);
-
   subscriptions.push(barItem);
-
   subscriptions.push(
     vscode.workspace.onDidChangeTextDocument(e =>
       updateKeyStrokes(e, globalState, workspaceState)
     )
   );
 
-  console.log("[stroke-log] v1.0.0 activated!");
+  console.log("[stroke-log] v2.0.0 activated!");
   updateKeyStrokes();
 }
 
 function updateKeyStrokes(e, globalState, workspaceState) {
   if (e && e.contentChanges && e.contentChanges[0].text.length <= 1) {
-    globalState.update("key-strokes", globalKeyStrokes);
-    globalState.update("weekly-strokes", weeklyKeyStrokes);
-    globalState.update("daily-strokes", dailyKeyStrokes);
-    workspaceState.update("key-strokes", workspaceKeyStrokes);
-    globalKeyStrokes = globalKeyStrokes + 1;
-    weeklyKeyStrokes = weeklyKeyStrokes + 1;
-    dailyKeyStrokes = dailyKeyStrokes + 1;
-    workspaceKeyStrokes = workspaceKeyStrokes + 1;
-    dailyWorkspaceKeyStrokes = dailyWorkspaceKeyStrokes + 1;
+    Object.keys(keystrokes.global).forEach(e => {
+      globalState.update(`global-${e}-strokes`, keystrokes.global[e]);
+      keystrokes.global[e] = keystrokes.global[e] + 1;
+    });
 
-    if (globalState.get("weekly-strokes-week") !== getWeekNumber(new Date())) {
-      globalState.update("weekly-strokes", 0);
-      weeklyKeyStrokes = 0;
-      globalState.update("weekly-strokes-week", getWeekNumber(new Date()));
+    workspaceToggled &&
+      Object.keys(keystrokes.workspace).forEach(e => {
+        workspaceState.update(
+          `workspace-${e}-strokes`,
+          keystrokes.workspace[e]
+        );
+        keystrokes.workspace[e] = keystrokes.workspace[e] + 1;
+      });
+
+    if (
+      globalState.get("weekly-strokes-reset") !== getWeekNumber(new Date())[1]
+    ) {
+      globalState.update("global-weekly-strokes", 0);
+      keystrokes.global.weekly = 0;
+      workspaceState.update("workspace-weekly-strokes", 0);
+      keystrokes.workspace.weekly = 0;
+      globalState.update("weekly-strokes-reset", getWeekNumber(new Date())[1]);
     }
-    if (globalState.get("daily-strokes-day") !== getDayOfYear()) {
-      globalState.update("daily-strokes", 0);
-      dailyKeyStrokes = 0;
-      globalState.update("daily-strokes-day", getDayOfYear());
+    if (globalState.get("daily-strokes-reset") !== getDayOfYear()) {
+      globalState.update("global-daily-strokes", 0);
+      keystrokes.global.daily = 0;
+      workspaceState.update("workspace-daily-strokes", 0);
+      keystrokes.workspace.daily = 0;
+      globalState.update("daily-strokes-reset", getDayOfYear());
     }
-    if (workspaceState.get("daily-strokes-day") !== getDayOfYear()) {
-      workspaceState.update("daily-strokes", 0);
-      dailyWorkspaceKeyStrokes = 0;
-      workspaceState.update("daily-strokes-day", getDayOfYear());
+    if (globalState.get("monthly-strokes-reset") !== new Date().getMonth()) {
+      globalState.update("global-monthly-strokes", 0);
+      keystrokes.global.monthly = 0;
+      workspaceState.update("workspace-monthly-strokes", 0);
+      keystrokes.workspace.monthly = 0;
+      globalState.update("monthly-strokes-reset", new Date().getMonth());
     }
   }
 
   if (workspaceToggled) {
-    barItemWorkspace.text = `⌨️  ${dailyWorkspaceKeyStrokes} strokes in workspace today`;
+    barItemWorkspace.text = `$(keyboard)  ${keystrokes.workspace.daily} strokes in workspace today`;
     barItemWorkspace.show();
   } else {
     barItemWorkspace.hide();
   }
 
-  if (globalKeyStrokes > -1) {
-    barItem.text = `⌨️  ${dailyKeyStrokes} strokes today`;
+  if (keystrokes.global.all > -1) {
+    barItem.text = `$(keyboard)  ${keystrokes.global.daily} strokes today`;
     barItem.show();
   } else {
     barItem.hide();
@@ -158,7 +159,7 @@ exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate({ globalState }) {
-  console.log("[stroke-log] v1.0.0 deactivated!");
+  console.log("[stroke-log] v2.0.0 deactivated!");
 }
 
 module.exports = {
