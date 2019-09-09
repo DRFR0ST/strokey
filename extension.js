@@ -31,10 +31,10 @@ function activate({ subscriptions, globalState, workspaceState }) {
   workspaceToggled = globalState.get("workspace-toggled");
 
   // Global state
-  keystrokes.global.daily = globalState.get("global-daily-strokes") || 0;
-  keystrokes.global.weekly = globalState.get("global-weekly-strokes") || 0;
+  keystrokes.global.daily = globalState.get("global-daily-strokes") || globalState.get("daily-strokes") || 0;
+  keystrokes.global.weekly = globalState.get("global-weekly-strokes") || globalState.get("weekly-strokes") || 0;
   keystrokes.global.monthly = globalState.get("global-monthly-strokes") || 0;
-  keystrokes.global.all = globalState.get("global-all-strokes") || 0;
+  keystrokes.global.all = globalState.get("global-all-strokes") || globalState.get("key-strokes") || 0;
 
   // Workspace state
   keystrokes.workspace.daily =

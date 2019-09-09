@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.4] - 2019-09-10
+### Added
+- Backwards compatibility
+
 ## [1.1.3] - 2019-09-10
 ### Fixed
 - Weekly stats
