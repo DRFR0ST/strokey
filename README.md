@@ -1,5 +1,8 @@
 # stroke-log
 
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/drfrost.stroke-log?style=for-the-badge)
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/drfrost.stroke-log?style=for-the-badge)
+
 ## The most powerful extension 💀
 This extension will count all keystrokes for you! Daily, Weekly and Monthly! 🔥
 
