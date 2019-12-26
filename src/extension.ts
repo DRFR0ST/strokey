@@ -151,7 +151,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
       toggleWorkspace,
       barItems.global,
-      vscode.workspace.onDidChangeTextDocument(e =>
+      vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) =>
         updateKeyStrokes(e, context)
       ),
       vscode.workspace.onWillSaveTextDocument(handleSave),
