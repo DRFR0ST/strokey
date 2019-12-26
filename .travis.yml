@@ -1,25 +1,22 @@
+dist: trusty
 sudo: false
-
+cache: yarn
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb https://dl.yarnpkg.com/debian/ stable main'
+        key_url: 'https://dl.yarnpkg.com/debian/pubkey.gpg'
+    packages:
+      - yarn
 os:
   - osx
   - linux
-
-cache: yarn
-addons:
-apt:
-    sources:
-    - sourceline: 'deb https://dl.yarnpkg.com/debian/ stable main'
-        key_url: 'https://dl.yarnpkg.com/debian/pubkey.gpg'
-    packages:
-    - yarn
-
 install:
-    - |
-        if [ $TRAVIS_OS_NAME == "linux" ]; then
-            export DISPLAY=':99.0'
-            /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        fi
-    - yarn
-
+  - |
+    if [ $TRAVIS_OS_NAME == "linux" ]; then
+        export DISPLAY=':99.0'
+        /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+    fi
+  - yarn
 script:
   - yarn test
