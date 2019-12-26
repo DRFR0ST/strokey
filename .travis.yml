@@ -12,7 +12,7 @@ before_install:
     fi
 
 install:
-  - yarn
+  - npm install
 
 script:
-  - yarn test
+  - npm test
