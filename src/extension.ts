@@ -158,8 +158,6 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.onDidChangeWindowState(handleSave)
     );
   })();
-
-  console.log("[stroke-log] activated!");
 }
 
 const updateKeyStrokes = (
@@ -203,5 +201,4 @@ const updateKeyStrokes = (
 };
 
 export function deactivate() {
-  console.log("[stroke-log] deactivated!");
 }
