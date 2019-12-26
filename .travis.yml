@@ -1,16 +1,16 @@
 dist: trusty
 sudo: false
-cache: yarn
-addons:
-  apt:
-    sources:
-      - sourceline: 'deb https://dl.yarnpkg.com/debian/ stable main'
-        key_url: 'https://dl.yarnpkg.com/debian/pubkey.gpg'
-    packages:
-      - yarn
 os:
   - osx
   - linux
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+before_install:
+  - npm install yarn
 install:
   - |
     if [ $TRAVIS_OS_NAME == "linux" ]; then
