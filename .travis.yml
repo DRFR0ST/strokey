@@ -3,12 +3,6 @@ sudo: false
 os:
   - osx
   - linux
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
 before_install:
   - npm install -g yarn
 install:

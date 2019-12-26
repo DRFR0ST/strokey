@@ -9,7 +9,8 @@
 	"license": "MIT",
 	"icon": "images/icon.png",
 	"engines": {
-		"vscode": "^1.41.0"
+		"vscode": "^1.41.0",
+		"node": ">=8.9.3"
 	},
 	"categories": [
 		"Other"
