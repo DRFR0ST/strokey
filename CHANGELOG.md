@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.2.0] - 2019-12-25
+### Changed
+- Rewritten for optimalization etc.
+
 ## [1.1.4] - 2019-09-10
 ### Added
 - Backwards compatibility

@@ -5,34 +5,20 @@
 	"author": "Mike Eling <mike.eling97@gmail.com>",
 	"publisher": "drfrost",
 	"repository": "https://github.com/DRFR0ST/stroke-log",
-	"version": "1.1.4",
+	"version": "1.2.0-alpha",
+	"license": "MIT",
+	"icon": "images/icon.png",
 	"engines": {
-		"vscode": "^1.33.0"
+		"vscode": "^1.41.0"
 	},
 	"categories": [
 		"Other"
 	],
-	"main": "./extension.js",
-	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"eslint": "^5.13.0",
-		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
-	},
-	"icon": "images/icon.png",
-	"galleryBanner": {
-		"color": "#C80000",
-		"theme": "dark"
-	},
 	"activationEvents": [
 		"onCommand:extension.toggleWorkspace",
 		"*"
 	],
+	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -40,5 +26,27 @@
 				"title": "Stroke Log: Toggle workspace log"
 			}
 		]
+	},
+	"scripts": {
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "yarn run compile",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.41.0",
+		"glob": "^7.1.5",
+		"mocha": "^6.2.2",
+		"typescript": "^3.6.4",
+		"tslint": "^5.20.0",
+		"vscode-test": "^1.2.2"
+	},
+	"galleryBanner": {
+		"color": "#C80000",
+		"theme": "dark"
 	}
 }
