@@ -1,15 +1,8 @@
 import * as vscode from "vscode";
 
 import { getDayOfYear, getWeekNumber } from "./libs/dates";
-
-type TKeystrokes = {
-  [key: string]: {
-    daily: number;
-    weekly: number;
-    monthly: number;
-    all: number;
-  };
-};
+import { normalize, getNiceWord } from "./utils/methods";
+import { TKeystrokes } from "./types";
 
 let Keystrokes: TKeystrokes = {
   workspace: {
@@ -26,8 +19,16 @@ let Keystrokes: TKeystrokes = {
   }
 };
 
+let personalGoal = -1;
+
 let workspaceToggled = false,
   barItems: { [key: string]: vscode.StatusBarItem } = {};
+
+// Id of the command for displaying count info.
+const countCMDId: { [key: string]: string } = {
+  global: "strokey.count",
+  workspace: "strokey.countWorkspace"
+};
 
 export function activate(context: vscode.ExtensionContext) {
   const handleSave = () => {
@@ -53,6 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   (function() {
     workspaceToggled = Boolean(context.globalState.get("workspace-toggled"));
+    personalGoal = Number(context.globalState.get("global-goal")) || 8000;
 
     // Load data from global and workspace states.
     ["workspace", "global"].forEach(space => {
@@ -71,45 +73,6 @@ export function activate(context: vscode.ExtensionContext) {
       });
     });
 
-    const normalize = (time: string, input: any) => {
-      if (context.globalState.get(`${time}-strokes-reset`) !== input) {
-        context.globalState.get(`global-${time}-strokes`, 0);
-        // @ts-ignore
-        Keystrokes.global[time] = 0;
-        context.workspaceState.update(`workspace-${time}-strokes`, 0);
-
-        // @ts-ignore
-        Keystrokes.workspace[time] = 0;
-        context.globalState.update(`${time}-strokes-reset`, input);
-      }
-    };
-
-    normalize("weekly", getWeekNumber(new Date())[1]);
-    normalize("daily", getDayOfYear());
-    normalize("monthly", new Date().getMonth());
-
-    // Id of the command for displaying count info.
-    const countCMDId: { [key: string]: string } = {
-      global: "extension.count",
-      workspace: "extension.countWorkspace"
-    };
-
-    context.subscriptions.push(
-      vscode.commands.registerCommand(countCMDId.global, () => {
-        vscode.window.showInformationMessage(
-          `Stroked ${Keystrokes.global.all} keys in overall, ${Keystrokes.global.monthly} in this month, ${Keystrokes.global.weekly} in this week, ${Keystrokes.global.daily} today.`
-        );
-      })
-    );
-
-    context.subscriptions.push(
-      vscode.commands.registerCommand(countCMDId.workspace, () => {
-        vscode.window.showInformationMessage(
-          `Stroked ${Keystrokes.workspace.all} keys overall, ${Keystrokes.workspace.monthly} in this month, ${Keystrokes.workspace.weekly} in this week, ${Keystrokes.workspace.daily} today.`
-        );
-      })
-    );
-
     // Create status bar item and push to subscriptions.
     const createStatusBarItem = (space: string) => {
       const e = vscode.window.createStatusBarItem(
@@ -123,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
         (space === "workspace" && workspaceToggled) ||
         space !== "workspace"
       ) {
-        e.text = `$(keyboard) ${Keystrokes[space].daily} strokes`;
+        e.text = `$(keyboard) ${Keystrokes[space].daily} keystrokes`;
         e.show();
       }
 
@@ -135,28 +98,77 @@ export function activate(context: vscode.ExtensionContext) {
       workspace: createStatusBarItem("workspace")
     };
 
-    let toggleWorkspace = vscode.commands.registerCommand(
-      "extension.toggleWorkspace",
-      () => {
-        context.globalState.update(
-          "workspace-toggled",
-          !context.globalState.get("workspace-toggled")
+    // Commands =>
+
+    const globalCountCommand =
+      vscode.commands.registerCommand(countCMDId.global, () => {
+        vscode.window.showInformationMessage(
+          `📈 Stroked ${Keystrokes.global.all} keys overall, ${Keystrokes.global.monthly} this month, ${Keystrokes.global.weekly} this week, ${Keystrokes.global.daily} today.`
         );
-        workspaceToggled = Boolean(
-          context.globalState.get("workspace-toggled")
+      }) 
+
+    const workspaceCountCommand = 
+      vscode.commands.registerCommand(countCMDId.workspace, () => {
+        vscode.window.showInformationMessage(
+          `📈 Stroked ${Keystrokes.workspace.all} keys overall, ${Keystrokes.workspace.monthly} this month, ${Keystrokes.workspace.weekly} this week, ${Keystrokes.workspace.daily} today.`
         );
-      }
-    );
+      })
+    
+
+    let toggleWorkspaceCommand = 
+      vscode.commands.registerCommand(
+        "strokey.toggleWorkspace",
+        () => {
+          context.globalState.update(
+            "workspace-toggled",
+            !context.globalState.get("workspace-toggled")
+          );
+          workspaceToggled = Boolean(
+            context.globalState.get("workspace-toggled")
+          );
+        }
+      );
+
+    let setGoalCommand =
+      vscode.commands.registerCommand("strokey.setGoal", () => {
+           vscode.window.showInputBox({placeHolder: "10000", value: personalGoal.toString(), prompt: "Set your daily goal."}).then(newGoal => {
+            if(!isNaN(Number(newGoal))) {
+              context.globalState.update("global-goal", newGoal);
+              personalGoal = Number(newGoal);
+              vscode.window.showInformationMessage(`✔️ Goal has been set to ${personalGoal}`);
+            } else {
+              vscode.window.showInformationMessage(`❌ Goal has to be a number!`);
+            }
+          });
+      })
+
+    let showProgressCommand =
+      vscode.commands.registerCommand("strokey.showProgress", () => {
+        try {
+          if(personalGoal !== -1) {
+            vscode.window.showInformationMessage(`🔄 Todays progress: ${Keystrokes.global.daily} / ${personalGoal}`);
+          }
+        } catch(err) {
+          console.error(err);
+        }
+      })
 
     context.subscriptions.push(
-      toggleWorkspace,
+      globalCountCommand,
+      workspaceCountCommand,
+      showProgressCommand,
+      setGoalCommand,
+      toggleWorkspaceCommand,
       barItems.global,
       vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) =>
         updateKeyStrokes(e, context)
       ),
       vscode.workspace.onWillSaveTextDocument(handleSave),
-      vscode.window.onDidChangeWindowState(handleSave)
+      vscode.window.onDidChangeWindowState(handleSave),
     );
+    normalize(context, Keystrokes, "weekly", getWeekNumber(new Date())[1]);
+    normalize(context, Keystrokes, "daily", getDayOfYear());
+    normalize(context, Keystrokes, "monthly", new Date().getMonth());
   })();
 }
 
@@ -178,6 +190,10 @@ const updateKeyStrokes = (
       ) {
         Keystrokes.global[key]++;
 
+        if(key === "daily" && personalGoal === Keystrokes.global.daily) {
+          vscode.window.showInformationMessage(`🎉 ${getNiceWord()}! You have reached your daily goal!`);
+        }
+
         if (workspaceToggled) {
           Keystrokes.workspace[key]++;
         }
@@ -185,15 +201,19 @@ const updateKeyStrokes = (
     });
   }
 
+  normalize(context, Keystrokes, "weekly", getWeekNumber(new Date())[1]);
+  normalize(context, Keystrokes, "daily", getDayOfYear());
+  normalize(context, Keystrokes, "monthly", new Date().getMonth());
+
   if (workspaceToggled) {
-    barItems.workspace.text = `$(keyboard) ${Keystrokes.workspace.daily} strokes in workspace`;
+    barItems.workspace.text = `$(keyboard) ${Keystrokes.workspace.daily} workspace keystrokes`;
     barItems.workspace.show();
   } else {
     barItems.workspace.hide();
   }
 
   if (Keystrokes.global.all > -1) {
-    barItems.global.text = `$(keyboard) ${Keystrokes.global.daily} strokes`;
+    barItems.global.text = `$(keyboard) ${Keystrokes.global.daily} keystrokes`;
     barItems.global.show();
   } else {
     barItems.global.hide();

@@ -1,11 +1,11 @@
 {
-	"name": "stroke-log",
-	"displayName": "Stroke Log",
+	"name": "strokey",
+	"displayName": "Strokey",
 	"description": "Counts all your keystrokes.",
 	"author": "Mike Eling <mike.eling97@gmail.com>",
 	"publisher": "drfrost",
-	"repository": "https://github.com/DRFR0ST/stroke-log",
-	"version": "1.2.0",
+	"repository": "https://github.com/DRFR0ST/strokey",
+	"version": "1.3.0",
 	"license": "MIT",
 	"icon": "images/icon.png",
 	"engines": {
@@ -15,15 +15,25 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.toggleWorkspace",
+		"onCommand:strokey.toggleWorkspace",
+		"onCommand:strokey.setGoal",
+		"onCommand:strokey.showProgress",
 		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.toggleWorkspace",
-				"title": "Stroke Log: Toggle workspace log"
+				"command": "strokey.toggleWorkspace",
+				"title": "Strokey: Toggle workspace log"
+			},
+			{
+				"command": "strokey.setGoal",
+				"title": "Strokey: Set daily goal"
+			},
+			{
+				"command": "strokey.showProgress",
+				"title": "Strokey: Show todays progress"
 			}
 		]
 	},

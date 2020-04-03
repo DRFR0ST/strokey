@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.0] - 2020-04-03
+### Added
+- Daily personal goals.
+
+### Changed
+- Renamed to Strokey!
+
 ## [1.2.0] - 2019-12-25
 ### Changed
 - Rewritten for optimalization etc.
