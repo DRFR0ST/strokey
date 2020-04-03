@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.1] - 2020-04-04
+### Changed
+- Update README
+
 ## [1.3.0] - 2020-04-03
 ### Added
 - Daily personal goals.
