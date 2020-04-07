@@ -2,22 +2,11 @@ import * as vscode from "vscode";
 
 import { getDayOfYear, getWeekNumber } from "./libs/dates";
 import { normalize, getNiceWord } from "./utils/methods";
-import { TKeystrokes } from "./types";
+import { User as Usr } from './api/user';
+import { TTarget } from "./types";
 
-let Keystrokes: TKeystrokes = {
-  workspace: {
-    daily: 0,
-    weekly: 0,
-    monthly: 0,
-    all: 0
-  },
-  global: {
-    daily: 0,
-    weekly: 0,
-    monthly: 0,
-    all: 0
-  }
-};
+const User = new Usr("");
+const Keystrokes = User.keystrokes;
 
 let personalGoal = -1;
 
@@ -31,6 +20,9 @@ const countCMDId: { [key: string]: string } = {
 };
 
 export function activate(context: vscode.ExtensionContext) {
+  User.setToken(context.globalState.get("token") || "");
+  if(User.token) User.login();
+
   const handleSave = () => {
     ["daily", "weekly", "monthly", "all"].forEach((key: string) => {
       if (
@@ -41,12 +33,12 @@ export function activate(context: vscode.ExtensionContext) {
       ) {
         context.globalState.update(
           `global-${key}-strokes`,
-          Keystrokes.global[key]
+          Keystrokes.get("global", key)
         );
 
         context.workspaceState.update(
           `workspace-${key}-strokes`,
-          Keystrokes.workspace[key]
+          Keystrokes.get("workspace", key)
         );
       }
     });
@@ -57,8 +49,8 @@ export function activate(context: vscode.ExtensionContext) {
     personalGoal = Number(context.globalState.get("global-goal")) || 8000;
 
     // Load data from global and workspace states.
-    ["workspace", "global"].forEach(space => {
-      Object.keys(Keystrokes[space]).forEach((key: string) => {
+    (["workspace", "global"] as TTarget[]).forEach((space) => {
+      Object.keys(Keystrokes.get(space)).forEach((key: string) => {
         if (
           key === "daily" ||
           key === "weekly" ||
@@ -67,14 +59,13 @@ export function activate(context: vscode.ExtensionContext) {
         ) {
           // @ts-ignore
           const state = context[`${space}State`];
-          Keystrokes[space][key] =
-            Number(state.get(`${space}-${key}-strokes`)) || 0;
+          Keystrokes.set(space, key, Number(state.get(`${space}-${key}-strokes`)) || 0);
         }
       });
     });
 
     // Create status bar item and push to subscriptions.
-    const createStatusBarItem = (space: string) => {
+    const createStatusBarItem = (space: TTarget) => {
       const e = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Right,
         101
@@ -86,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
         (space === "workspace" && workspaceToggled) ||
         space !== "workspace"
       ) {
-        e.text = `$(keyboard) ${Keystrokes[space].daily} keystrokes`;
+        e.text = `$(keyboard) ${Keystrokes.get(space, "daily")} keystrokes`;
         e.show();
       }
 
@@ -149,14 +140,55 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage(`🔄 Todays progress: ${Keystrokes.global.daily} / ${personalGoal}`);
           }
         } catch(err) {
-          console.error(err);
+          //console.error(err);
         }
+      })
+
+    let signInCommand =
+      vscode.commands.registerCommand('strokey.signin', () => {
+        vscode.window.showInputBox({value: "", prompt: "Enter your authorization token."}).then(tkn => {
+          if(tkn) {
+            context.globalState.update("token", tkn);
+            User.setToken(tkn);
+            vscode.window.showInformationMessage(`✔️ You are logged in now!`);
+            //sync();
+          } else {
+            vscode.window.showInformationMessage(`❌ Goal has to be a number!`);
+          }
+        });
+      })
+    let signOutCommand =
+      vscode.commands.registerCommand('strokey.signout', () => {
+        context.globalState.update("token", "");
+        User.setToken("");
+       vscode.window.showInformationMessage(`✔️ You are logged out now! Bye!`);
+      })
+    let signUpCommand =
+      vscode.commands.registerCommand('strokey.signup', () => {
+        vscode.window.showInputBox({value: "", prompt: "Enter your authorization token."}).then(label => {
+          if(label) {
+            User.register(label, {global: Keystrokes.global});
+            vscode.window.showInformationMessage(`✔️ You are signed up now!`);
+          } else {
+            vscode.window.showInformationMessage(`❌ Label cannot be empty!`);
+          }
+        });
+      })
+    let showToken =
+      vscode.commands.registerCommand('strokey.token', () => {
+        if(!User.anonymous)
+          vscode.window.showInformationMessage(`🔑 Your personal token: ${User.token}`);
+        else
+        vscode.window.showInformationMessage(`🔑 You need to login to get access to your token.`);
       })
 
     context.subscriptions.push(
       globalCountCommand,
       workspaceCountCommand,
       showProgressCommand,
+      !User.anonymous ? signInCommand : signOutCommand,
+      signUpCommand,
+      showToken,
       setGoalCommand,
       toggleWorkspaceCommand,
       barItems.global,

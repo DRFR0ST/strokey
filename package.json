@@ -25,15 +25,45 @@
 		"commands": [
 			{
 				"command": "strokey.toggleWorkspace",
-				"title": "Strokey: Toggle workspace log"
+				"title": "Toggle workspace log",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
 			},
 			{
 				"command": "strokey.setGoal",
-				"title": "Strokey: Set daily goal"
+				"title": "Set daily goal",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
 			},
 			{
 				"command": "strokey.showProgress",
-				"title": "Strokey: Show todays progress"
+				"title": "Show todays progress",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
+			},
+			{
+				"command": "strokey.signin",
+				"title": "Sign-in",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
+			},
+			{
+				"command": "strokey.signout",
+				"title": "Sign-out",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
+			},
+			{
+				"command": "strokey.signup",
+				"title": "Sign-up",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
+			},
+			{
+				"command": "strokey.token",
+				"title": "Show personal token",
+				"category": "Strokey",
+				"icon": "$(keyboard)"
 			}
 		]
 	},
@@ -48,15 +78,19 @@
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.11.7",
+		"@types/request": "^2.48.4",
 		"@types/vscode": "^1.41.0",
 		"glob": "^7.1.5",
 		"mocha": "^6.2.2",
-		"typescript": "^3.6.4",
 		"tslint": "^5.20.0",
+		"typescript": "^3.6.4",
 		"vscode-test": "^1.2.2"
 	},
 	"galleryBanner": {
 		"color": "#C80000",
 		"theme": "dark"
+	},
+	"dependencies": {
+		"request": "^2.88.2"
 	}
 }

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { TKeystrokes } from "../types";
+import { IKeystrokes } from "../types";
 
-export const normalize = (context: vscode.ExtensionContext, Keystrokes: TKeystrokes, time: string, input: any) => {
+export const normalize = (context: vscode.ExtensionContext, Keystrokes: IKeystrokes, time: string, input: any) => {
     if (context.globalState.get(`${time}-strokes-reset`) !== input) {
         context.globalState.get(`global-${time}-strokes`, 0);
         // @ts-ignore
