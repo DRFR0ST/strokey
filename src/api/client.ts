@@ -14,7 +14,7 @@ export class Client implements IClientClass {
     }
 
     makeArguments(args: {[key: string]: string}) {
-        return Object.entries(args).map((e => e.join("="))).join("&");
+        return Object.entries(args).map((e => `${e[0]}=${typeof e[1] === "object" ? JSON.stringify(e[1]) : e[1]}`)).join("&");
     }
 
     execute(command: ICommandClass) {
@@ -27,7 +27,8 @@ export class Client implements IClientClass {
             request(reqUrl, 
                 function (error:Error, response:any, body: any) {
                     if(error) return reject(error);
-                    resolve(command.parse(response.statusCode, body));
+                    console.log(cmd, "=>", JSON.parse(body));
+                    resolve({status: response.statusCode, data: command.parse(response.statusCode, JSON.parse(body))});
                 });
         })
     }

@@ -28,3 +28,15 @@ export class UserCreate extends Command {
         return data;
     }
 }
+
+export class ChangeKeystrokes extends Command {
+    constructor(token: string, value: number|IKeystrokes, key?: string) {
+        super(["changeKeystrokes", {token, key, value}]);
+    }
+
+    parse(status: number, data: any) {
+        if(status !== 204) return data;
+
+        return data;
+    }
+}

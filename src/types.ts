@@ -1,6 +1,7 @@
 export interface IUser {
   label: string;
-  keystrokes: IKeystrokes
+  keystrokes: IKeystrokes;
+  goal: number;
 }
 
 export type IStrokeCollection = {[key in TStrokes]: number};
