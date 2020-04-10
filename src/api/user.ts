@@ -41,7 +41,7 @@ export class User implements IUserClass {
     }
 
     public setGoal(goal: number) {
-        this.context.globalState.update("global-goal", goal || 8000);
+        this.context.globalState.update("global-goal", Number(goal || 8000));
     }
 
     public setToken(token: string) {

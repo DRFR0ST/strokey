@@ -36,7 +36,8 @@ export function activate(context: vscode.ExtensionContext) {
         (space === "workspace" && workspaceToggled) ||
         space !== "workspace"
       ) {
-        e.text = `$(keyboard) ${Keystrokes.get(space, "daily")} keystrokes`;
+        const prefix = User.info?.label ? `${User.info?.label}, ` : "";
+        e.text = `${prefix}$(keyboard) ${Keystrokes.get(space, "daily")} keystrokes`;
         e.show();
       }
 
