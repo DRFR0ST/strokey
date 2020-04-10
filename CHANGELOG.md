@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- User authorization.
 
 ## [1.3.1] - 2020-04-04
 ### Changed
